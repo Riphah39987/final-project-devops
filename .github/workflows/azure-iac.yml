@@ -1,0 +1,36 @@
+name: Azure Infrastructure
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'phase1-iac/terraform/azure/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'phase1-iac/terraform/azure/**'
+
+jobs:
+  terraform:
+    name: Terraform Azure
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      working-directory: phase1-iac/terraform/azure
+      run: terraform init
+
+    - name: Terraform Plan
+      working-directory: phase1-iac/terraform/azure
+      run: terraform plan
+      env:
+        ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+        ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+        ARM_SUBSCRIPTION_ID: ${{ secrets.ARM_SUBSCRIPTION_ID }}
+        ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}

@@ -1,0 +1,33 @@
+name: GCP Infrastructure
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'phase1-iac/terraform/gcp/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'phase1-iac/terraform/gcp/**'
+
+jobs:
+  terraform:
+    name: Terraform GCP
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v3
+
+    - name: Terraform Init
+      working-directory: phase1-iac/terraform/gcp
+      run: terraform init
+
+    - name: Terraform Plan
+      working-directory: phase1-iac/terraform/gcp
+      run: terraform plan
+      env:
+        GOOGLE_CREDENTIALS: ${{ secrets.GOOGLE_CREDENTIALS }}
